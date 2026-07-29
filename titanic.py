@@ -95,7 +95,9 @@ def top_countries(num: int | None = None) -> None:
     _print_pretty(ships_by_country)
     print()  # spacer
 
-def resolve_command(user_command):
+
+def _resolve_command(user_command: str) -> str | None:
+    # Resolve a abbreviation like "h" to its command.
     for command, variants in COMMANDS.items():
         if user_command in variants:
             return command
@@ -117,7 +119,7 @@ def _get_menu_selection() -> tuple[str, tuple]:
         user_input_lst = raw_user_input.split()
         user_command = user_input_lst[0]
         param = user_input_lst[1:2]  # slice for i1 to prevent out-of-index
-        command = resolve_command(user_command)
+        command = _resolve_command(user_command)
         if not command:
             print("Unknown command. See 'help' for all available commands.")
         elif not all(para.isdigit() for para in param):
