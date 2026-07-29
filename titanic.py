@@ -11,8 +11,8 @@ top_countries <num_countries>
     have the most ships, along with the number of ships.
 
 """
-
 import json
+import sys
 from pathlib import Path
 
 DATA_PATH = "ships_data.json"
@@ -21,6 +21,7 @@ COMMANDS = {
     "help": ("help", "h"),
     "show_countries": ("show_countries", "sc"),
     "top_countries": ("top_countries", "tc"),
+    "quit": ("quit", "e"),
 }
 
 COMMANDS_DESCRIPTION = {
@@ -30,6 +31,7 @@ COMMANDS_DESCRIPTION = {
         "top_countries <num_countries>",
         f"Show top countries [default: {TOP_COUNTRIES_DEFAULT}]",
     ),
+    "quit": ("quit", "Quit the program"),
 }
 
 
@@ -105,6 +107,10 @@ def _get_menu_selection() -> tuple[str, tuple]:
             return command, tuple(int(p) for p in param)
 
 
+def quit():
+    sys.exit()
+
+
 def run_titanic() -> None:
     print(
         "\nWelcome to the Ships CLI! "
@@ -114,10 +120,12 @@ def run_titanic() -> None:
         show_help,
         show_countries,
         top_countries,
+        quit,
     ]
     menu_dispatch = dict(zip(COMMANDS.keys(), command_fn, strict=True))
-    choice, params = _get_menu_selection()
-    menu_dispatch[choice](*params)
+    while True:
+        choice, params = _get_menu_selection()
+        menu_dispatch[choice](*params)
 
 
 def main() -> None:
