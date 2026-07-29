@@ -44,10 +44,7 @@ def show_help() -> None:
     print("\nAvailable commands:")
 
     command_desc_vals = COMMANDS_DESCRIPTION.values()
-    max_width = max(len(c) for c, _ in command_desc_vals)
-
-    for comm, desc in command_desc_vals:
-        print(f"    {comm:<{max_width + 4}} {desc}")
+    print_pretty(command_desc_vals)
     print()  # spacer
 
 def get_top_countries(num: int):
@@ -67,7 +64,8 @@ def show_countries() -> None:
     data: list[dict] = _load_data()["data"]
     countries = sorted({d["COUNTRY"] for d in data})
     for c in countries:
-        print(c)
+        print("    " + c)
+    print()  # spacer
 
 
 def top_countries(num: int | None = None) -> None:
@@ -78,10 +76,9 @@ def top_countries(num: int | None = None) -> None:
         )
         num = TOP_COUNTRIES_DEFAULT
     print(f"\nThe top {num} countries by ships present in data:")
-    ships_by_country = get_top_countries(num)
-    max_length = max([len(c) for c in ships_by_country])
-    for country, num_ships in ships_by_country.items():
-        print(f"{country:<{max_length + 2}}: {num_ships}")
+    ships_by_country = get_top_countries(num).items()
+    print_pretty(ships_by_country)
+    print()  # spacer
 
 
 def _get_menu_selection() -> tuple[str, tuple]:
@@ -105,6 +102,11 @@ def _get_menu_selection() -> tuple[str, tuple]:
             print("Parameter must be an integer.")
         else:
             return command, tuple(int(p) for p in param)
+
+def print_pretty(items):
+    max_width = max(len(c) for c, _ in items)
+    for comm, desc in items:
+        print(f"    {comm:<{max_width + 4}} {desc}")
 
 
 def quit():
