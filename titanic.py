@@ -12,6 +12,9 @@ top_countries <num_countries>
 quit
     Quits the program.
 
+
+~ Made with ❤️ and without ai or code completion (except intelliSense) ~
+
 """
 
 import json
