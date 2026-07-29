@@ -28,17 +28,17 @@ COMMANDS = {
     "help": ("help", "h"),
     "show_countries": ("show_countries", "sc"),
     "top_countries": ("top_countries", "tc"),
-    "quit": ("quit", "e"),
+    "quit": ("quit", "q"),
 }
 
 COMMANDS_DESCRIPTION = {
-    "help": ("help", "Show this help"),
-    "show_countries": ("show_countries", "List all countries"),
+    "help": ("help, h", "Show this help"),
+    "show_countries": ("show_countries, sc", "List all countries"),
     "top_countries": (
-        "top_countries <num_countries>",
+        "top_countries, tc <num_countries>",
         f"Show top countries [default: {TOP_COUNTRIES_DEFAULT}]",
     ),
-    "quit": ("quit", "Quit the program"),
+    "quit": ("quit, q", "Quit the program"),
 }
 
 
@@ -95,6 +95,12 @@ def top_countries(num: int | None = None) -> None:
     _print_pretty(ships_by_country)
     print()  # spacer
 
+def resolve_command(user_command):
+    for command, variants in COMMANDS.items():
+        if user_command in variants:
+            return command
+    return None
+
 
 def _get_menu_selection() -> tuple[str, tuple]:
     """Presents the cli.
@@ -109,9 +115,10 @@ def _get_menu_selection() -> tuple[str, tuple]:
     while True:
         raw_user_input = input("Enter command: ")
         user_input_lst = raw_user_input.split()
-        command = user_input_lst[0]
+        user_command = user_input_lst[0]
         param = user_input_lst[1:2]  # slice for i1 to prevent out-of-index
-        if command not in COMMANDS:
+        command = resolve_command(user_command)
+        if not command:
             print("Unknown command. See 'help' for all available commands.")
         elif not all(para.isdigit() for para in param):
             print("Parameter must be an integer.")
