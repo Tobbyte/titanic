@@ -74,8 +74,8 @@ def show_countries() -> None:
     print("\nAll countries present in data [A-Z]:")
     data: list[dict] = _load_data()["data"]
     countries = sorted({d["COUNTRY"] for d in data})
-    for c in countries:
-        print("    " + c)
+    for country in countries:
+        print("    " + country)
     print()  # spacer
 
 
