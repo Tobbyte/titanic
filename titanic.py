@@ -3,16 +3,20 @@
 help
     Prints a list of the available commands.
 show_countries
-    Prints a list of all the countries of the ships, without duplicates.
-    The countries should be ordered alphabetically.
+    Prints a list of all countries of the ships, without duplicates,
+    ordered alphabetically.
 top_countries <num_countries>
-    Prints a list of top countries with the most ships.
+    Prints a list of the top <num> countries with the most ships.
     For example, top_countries 5, prints a list of the 5 countries which
     have the most ships, along with the number of ships.
+quit
+    Quits the program.
 
 """
+
 import json
 import sys
+from collections.abc import Iterable
 from pathlib import Path
 
 DATA_PATH = "ships_data.json"
@@ -36,30 +40,37 @@ COMMANDS_DESCRIPTION = {
 
 
 def _load_data() -> dict:
+    # read the data json
     with Path.open(Path(DATA_PATH)) as file:
         return json.loads(file.read())
 
 
 def show_help() -> None:
+    """Display the available commands."""
     print("\nAvailable commands:")
 
     command_desc_vals = COMMANDS_DESCRIPTION.values()
-    print_pretty(command_desc_vals)
+    _print_pretty(command_desc_vals)
     print()  # spacer
 
-def get_top_countries(num: int):
+
+def get_top_countries(num: int) -> dict:
+    """Get num numbers of ships per country."""
     data: list[dict] = _load_data()["data"]
     countries = {}
+
     # extract num of ships per country
     for ship in data:
         ship_origin = ship["COUNTRY"]
         countries[ship_origin] = countries.get(ship_origin, 0) + 1
-    # sort by num of ships
 
+    # sort by num of ships
     sort = sorted(countries.items(), key=lambda item: item[1], reverse=True)
     return dict(sort[:num])
 
+
 def show_countries() -> None:
+    """Print all countries present in data."""
     print("\nAll countries present in data [A-Z]:")
     data: list[dict] = _load_data()["data"]
     countries = sorted({d["COUNTRY"] for d in data})
@@ -69,6 +80,7 @@ def show_countries() -> None:
 
 
 def top_countries(num: int | None = None) -> None:
+    """Print the top num countries by number of ships."""
     if not num:
         print(
             "No parameter for top_countries given, "
@@ -77,7 +89,7 @@ def top_countries(num: int | None = None) -> None:
         num = TOP_COUNTRIES_DEFAULT
     print(f"\nThe top {num} countries by ships present in data:")
     ships_by_country = get_top_countries(num).items()
-    print_pretty(ships_by_country)
+    _print_pretty(ships_by_country)
     print()  # spacer
 
 
@@ -103,17 +115,25 @@ def _get_menu_selection() -> tuple[str, tuple]:
         else:
             return command, tuple(int(p) for p in param)
 
-def print_pretty(items):
+
+def _print_pretty(items: Iterable) -> None:
+    """Pretty print a list of key:value pairs.
+
+    Calculates the max length of the key to align the
+    values that length +2 to the right.
+    """
     max_width = max(len(c) for c, _ in items)
     for comm, desc in items:
         print(f"    {comm:<{max_width + 4}} {desc}")
 
 
-def quit():
+def quit_app() -> None:
+    """Quit the program."""
     sys.exit()
 
 
 def run_titanic() -> None:
+    """Orchestrate the main program."""
     print(
         "\nWelcome to the Ships CLI! "
         "Enter 'help' to view available commands.\n",
@@ -122,7 +142,7 @@ def run_titanic() -> None:
         show_help,
         show_countries,
         top_countries,
-        quit,
+        quit_app,
     ]
     menu_dispatch = dict(zip(COMMANDS.keys(), command_fn, strict=True))
     while True:
@@ -130,9 +150,5 @@ def run_titanic() -> None:
         menu_dispatch[choice](*params)
 
 
-def main() -> None:
-    run_titanic()
-
-
 if __name__ == "__main__":
-    main()
+    run_titanic()
