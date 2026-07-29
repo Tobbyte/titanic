@@ -18,10 +18,16 @@ from pathlib import Path
 DATA_PATH = "ships_data.json"
 TOP_COUNTRIES_DEFAULT = 5
 COMMANDS = {
-    ("help", "h"): ("", "Show this help"),
-    "show_countries": ("", "List all countries"),
+    "help": ("help", "h"),
+    "show_countries": ("show_countries", "sc"),
+    "top_countries": ("top_countries", "tc"),
+}
+
+COMMANDS_DESCRIPTION = {
+    "help": ("help", "Show this help"),
+    "show_countries": ("show_countries", "List all countries"),
     "top_countries": (
-        "<num_countries>",
+        "top_countries <num_countries>",
         f"Show top countries [default: {TOP_COUNTRIES_DEFAULT}]",
     ),
 }
@@ -34,17 +40,30 @@ def _load_data() -> dict:
 
 def show_help() -> None:
     print("\nAvailable commands:")
-    commands_items = COMMANDS.items()
-    max_width = max(len(k[0] + v[0]) for k, v in commands_items)
-    for comm, param in commands_items:
-        param_a, param_b = param
-        print(f"    {comm[0] + ' ' + param_a:<{max_width + 4}}", param_b)
+
+    command_desc_vals = COMMANDS_DESCRIPTION.values()
+    max_width = max(len(c) for c, _ in command_desc_vals)
+
+    for comm, desc in command_desc_vals:
+        print(f"    {comm:<{max_width + 4}} {desc}")
     print()  # spacer
 
+def get_top_countries(num: int):
+    data: list[dict] = _load_data()["data"]
+    countries = {}
+    # extract num of ships per country
+    for ship in data:
+        ship_origin = ship["COUNTRY"]
+        countries[ship_origin] = countries.get(ship_origin, 0) + 1
+    # sort by num of ships
+
+    sort = sorted(countries.items(), key=lambda item: item[1], reverse=True)
+    return dict(sort[:num])
 
 def show_countries() -> None:
+    print("\nAll countries present in data [A-Z]:")
     data: list[dict] = _load_data()["data"]
-    countries = {d["COUNTRY"] for d in data}
+    countries = sorted({d["COUNTRY"] for d in data})
     for c in countries:
         print(c)
 
@@ -56,7 +75,11 @@ def top_countries(num: int | None = None) -> None:
             f"defaulting to top {TOP_COUNTRIES_DEFAULT}",
         )
         num = TOP_COUNTRIES_DEFAULT
-    print(f"top_countries({num})")
+    print(f"\nThe top {num} countries by ships present in data:")
+    ships_by_country = get_top_countries(num)
+    max_length = max([len(c) for c in ships_by_country])
+    for country, num_ships in ships_by_country.items():
+        print(f"{country:<{max_length + 2}}: {num_ships}")
 
 
 def _get_menu_selection() -> tuple[str, tuple]:
@@ -76,8 +99,10 @@ def _get_menu_selection() -> tuple[str, tuple]:
         param = user_input_lst[1:2]  # slice for i1 to prevent out-of-index
         if command not in COMMANDS:
             print("Unknown command. See 'help' for all available commands.")
+        elif not all(para.isdigit() for para in param):
+            print("Parameter must be an integer.")
         else:
-            return command, tuple(param)
+            return command, tuple(int(p) for p in param)
 
 
 def run_titanic() -> None:
