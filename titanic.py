@@ -29,6 +29,7 @@ COMMANDS = {
     "show_countries": ("show_countries", "sc"),
     "top_countries": ("top_countries", "tc"),
     "ships_by_types": ("ships_by_types", "sbt"),
+    "seach_ship": ("seach_ship", "ss"),
     "quit": ("quit", "q"),
 }
 
@@ -40,6 +41,7 @@ COMMANDS_DESCRIPTION = {
         f"Show top countries [default: {TOP_COUNTRIES_DEFAULT}]",
     ),
     "ships_by_types": ("ships_by_types, sbt", "List ships by types."),
+    "seach_ship": ("seach_ship", "Search ships by name (fuzzy)."),
     "quit": ("quit, q", "Quit the program"),
 }
 
@@ -114,6 +116,14 @@ def show_countries() -> None:
     for country in countries:
         print("    " + country)
     print()  # spacer
+
+
+def search_ship() -> None:
+    """Search by name for ships.
+
+    Uses custom fuzzy matching.
+    """
+    print("search_ship()")
 
 
 def top_countries(num: int | None = None) -> None:
@@ -193,6 +203,7 @@ def run_titanic() -> None:
         show_countries,
         top_countries,
         ships_by_types,
+        search_ship,
         quit_app,
     ]
     menu_dispatch = dict(zip(COMMANDS.keys(), command_fn, strict=True))
