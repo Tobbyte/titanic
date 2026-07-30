@@ -57,7 +57,18 @@ def show_help() -> None:
     print()  # spacer
 
 
-def get_top_countries(num: int) -> dict:
+def _sort_dict_on_values(
+    unsorted_dict: dict,
+    *,
+    descending: bool = True,
+) -> dict:
+    return dict(
+        sorted(
+            unsorted_dict.items(),
+            key=lambda item: item[1],
+            reverse=descending,
+        ),
+    )
     """Get num numbers of ships per country."""
     data: list[dict] = _load_data()["data"]
     countries = {}
