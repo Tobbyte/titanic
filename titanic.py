@@ -28,6 +28,7 @@ COMMANDS = {
     "help": ("help", "h"),
     "show_countries": ("show_countries", "sc"),
     "top_countries": ("top_countries", "tc"),
+    "ships_by_types": ("ships_by_types", "sbt"),
     "quit": ("quit", "q"),
 }
 
@@ -38,6 +39,7 @@ COMMANDS_DESCRIPTION = {
         "top_countries, tc <num_countries>",
         f"Show top countries [default: {TOP_COUNTRIES_DEFAULT}]",
     ),
+    "ships_by_types": ("ships_by_types, sbt", "List ships by types."),
     "quit": ("quit, q", "Quit the program"),
 }
 
@@ -84,6 +86,24 @@ def get_top_countries() -> dict:
     return countries
 
 
+def get_ships_by_types() -> dict:
+    """Get num numbers of ships per types."""
+    data: list[dict] = _load_data()["data"]
+    types = {}
+
+    for ship in data:
+        ship_type = ship["TYPE_SUMMARY"]
+        types[ship_type] = types.get(ship_type, 0) + 1
+
+    return types
+
+
+def ships_by_types() -> None:
+    """Get num numbers of ships per types."""
+    print("\nAll ship types present in data:")
+    by_types_sorted = _sort_dict_on_values(get_ships_by_types())
+    _print_pretty(by_types_sorted.items())
+    print()  # spacer
 
 
 def show_countries() -> None:
@@ -172,6 +192,7 @@ def run_titanic() -> None:
         show_help,
         show_countries,
         top_countries,
+        ships_by_types,
         quit_app,
     ]
     menu_dispatch = dict(zip(COMMANDS.keys(), command_fn, strict=True))
