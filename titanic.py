@@ -69,6 +69,9 @@ def _sort_dict_on_values(
             reverse=descending,
         ),
     )
+
+
+def get_top_countries() -> dict:
     """Get num numbers of ships per country."""
     data: list[dict] = _load_data()["data"]
     countries = {}
@@ -78,9 +81,9 @@ def _sort_dict_on_values(
         ship_origin = ship["COUNTRY"]
         countries[ship_origin] = countries.get(ship_origin, 0) + 1
 
-    # sort by num of ships
-    sort = sorted(countries.items(), key=lambda item: item[1], reverse=True)
-    return dict(sort[:num])
+    return countries
+
+
 
 
 def show_countries() -> None:
@@ -102,8 +105,12 @@ def top_countries(num: int | None = None) -> None:
         )
         num = TOP_COUNTRIES_DEFAULT
     print(f"\nThe top {num} countries by ships present in data:")
-    ships_by_country = get_top_countries(num).items()
-    _print_pretty(ships_by_country)
+    ships_by_country_sorted = _sort_dict_on_values(get_top_countries())
+    ships_by_country_sorted_top = dict(  # extract?
+        list(ships_by_country_sorted.items())[: num + 1],
+    )
+
+    _print_pretty(ships_by_country_sorted_top.items())
     print()  # spacer
 
 
