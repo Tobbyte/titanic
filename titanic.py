@@ -130,8 +130,7 @@ def search_ship() -> None:
         print(f'\nNo ship name in db matches your query "{ship_name_query}"')
     else:
         print("\nShip names matching your query:")
-        for res in search_res:
-            print(res)
+        _print_pretty(dict.fromkeys(search_res, "").items())
     print()  # spacer
 
 
