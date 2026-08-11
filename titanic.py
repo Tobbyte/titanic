@@ -124,7 +124,7 @@ def search_ship() -> None:
     Uses custom fuzzy matching.
     """
     ship_names_list = _get_data_by_field("SHIPNAME")
-    ship_name_query = _get_user_input("Name to search for (fuzzy): ")
+    ship_name_query = _get_user_input("Name to search for (fuzzy): ").lower()
     search_res = get_similar(ship_names_list, ship_name_query)
     if not search_res:
         print(f'\nNo ship name in db matches your query "{ship_name_query}"')
@@ -136,7 +136,7 @@ def search_ship() -> None:
 
 def _get_user_input(prompt: str) -> str:
     while True:
-        raw_input = input(prompt).lower().strip()
+        raw_input = input(prompt).strip()
         if not raw_input:
             print("Not a valid input")
         else:
