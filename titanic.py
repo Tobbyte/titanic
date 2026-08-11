@@ -22,6 +22,8 @@ import sys
 from collections.abc import Iterable
 from pathlib import Path
 
+from fuzzy_tobbyte.fuzzy_tobbyte import get_similar
+
 DATA_PATH = "ships_data.json"
 TOP_COUNTRIES_DEFAULT = 5
 COMMANDS = {
@@ -29,7 +31,7 @@ COMMANDS = {
     "show_countries": ("show_countries", "sc"),
     "top_countries": ("top_countries", "tc"),
     "ships_by_types": ("ships_by_types", "sbt"),
-    "seach_ship": ("seach_ship", "ss"),
+    "search_ship": ("search_ship", "ss"),
     "quit": ("quit", "q"),
 }
 
@@ -75,35 +77,34 @@ def _sort_dict_on_values(
     )
 
 
-def get_top_countries() -> dict:
-    """Get num numbers of ships per country."""
+def _get_count_of_field(field: str) -> dict:
+    """Get count of unique values per field."""
     data: list[dict] = _load_data()["data"]
-    countries = {}
-
-    # extract num of ships per country
-    for ship in data:
-        ship_origin = ship["COUNTRY"]
-        countries[ship_origin] = countries.get(ship_origin, 0) + 1
-
-    return countries
-
-
-def get_ships_by_types() -> dict:
-    """Get num numbers of ships per types."""
-    data: list[dict] = _load_data()["data"]
-    types = {}
+    filtered_data = {}
 
     for ship in data:
-        ship_type = ship["TYPE_SUMMARY"]
-        types[ship_type] = types.get(ship_type, 0) + 1
+        field_data = ship[field]
+        filtered_data[field_data] = filtered_data.get(field_data, 0) + 1
 
-    return types
+    return filtered_data
+
+
+def _get_data_by_field_value(field: str, query: str) -> list:
+    """Get all data that has a specific value in a field."""
+    data: list[dict] = _load_data()["data"]
+    return [ship for ship in data if ship[field] == query]
+
+
+def _get_data_by_field(field: str) -> list:
+    """Get all data of a specific field."""
+    data: list[dict] = _load_data()["data"]
+    return [ship[field] for ship in data]
 
 
 def ships_by_types() -> None:
     """Get num numbers of ships per types."""
     print("\nAll ship types present in data:")
-    by_types_sorted = _sort_dict_on_values(get_ships_by_types())
+    by_types_sorted = _sort_dict_on_values(_get_count_of_field("TYPE_SUMMARY"))
     _print_pretty(by_types_sorted.items())
     print()  # spacer
 
@@ -117,13 +118,30 @@ def show_countries() -> None:
         print("    " + country)
     print()  # spacer
 
-
 def search_ship() -> None:
     """Search by name for ships.
 
     Uses custom fuzzy matching.
     """
-    print("search_ship()")
+    ship_names_list = _get_data_by_field("SHIPNAME")
+    ship_name_query = _get_user_input("Name to search for (fuzzy): ")
+    search_res = get_similar(ship_names_list, ship_name_query)
+    if not search_res:
+        print(f'\nNo ship name in db matches your query "{ship_name_query}"')
+    else:
+        print("\nShip names matching your query:")
+        for res in search_res:
+            print(res)
+    print()  # spacer
+
+
+def _get_user_input(prompt: str) -> str:
+    while True:
+        raw_input = input(prompt).lower().strip()
+        if not raw_input:
+            print("Not a valid input")
+        else:
+            return raw_input
 
 
 def top_countries(num: int | None = None) -> None:
@@ -135,7 +153,9 @@ def top_countries(num: int | None = None) -> None:
         )
         num = TOP_COUNTRIES_DEFAULT
     print(f"\nThe top {num} countries by ships present in data:")
-    ships_by_country_sorted = _sort_dict_on_values(get_top_countries())
+    ships_by_country_sorted = _sort_dict_on_values(
+        _get_count_of_field("COUNTRY"),
+    )
     ships_by_country_sorted_top = dict(  # extract?
         list(ships_by_country_sorted.items())[: num + 1],
     )
@@ -163,7 +183,7 @@ def _get_menu_selection() -> tuple[str, tuple]:
     "top_countries 5" -> ("top_countries", ("5"))
     """
     while True:
-        raw_user_input = input("Enter command: ")
+        raw_user_input = input("Enter command: ").lower()
         user_input_lst = raw_user_input.split()
         user_command = user_input_lst[0]
         param = user_input_lst[1:2]  # slice for i1 to prevent out-of-index
