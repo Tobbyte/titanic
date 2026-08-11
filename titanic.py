@@ -22,7 +22,7 @@ import sys
 from collections.abc import Iterable
 from pathlib import Path
 
-from fuzzy_tobbyte.fuzzy_tobbyte import get_similar
+from fuzzy_tobbyte import get_similar
 
 DATA_PATH = "ships_data.json"
 TOP_COUNTRIES_DEFAULT = 5
