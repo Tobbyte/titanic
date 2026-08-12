@@ -5,7 +5,7 @@ Limitations:
     - rudimentary sorting order of matches.
 
 
-Version: 2.1.1
+Version: 2.1.3
 
 ***********
 Copy of module standalones/tobbyte_fuzzy/
@@ -15,6 +15,8 @@ Copy of module standalones/tobbyte_fuzzy/
 """
 
 FUZZY_DIST_DEFAULT = 2
+MIN_MATCH_LEN = 2
+MID_MATCH_LEN = 5
 
 
 def _calc_distance(
@@ -60,13 +62,13 @@ def _init_table(str1: str, str2: str) -> list:
     return data_matrix
 
 
-def dissect_string(raw_search_term: str) -> dict[str, list[str]]:
+def dissect_string(raw_search_term: str) -> list[str]:
     """Sanitize the users search term.
 
     Returns a dict of original search term to
     list of lowered and stripped and split on whitespaces.
     """
-    return {raw_search_term: raw_search_term.lower().strip().split()}
+    return raw_search_term.lower().strip().split()
 
 
 def get_similar(
@@ -80,9 +82,8 @@ def get_similar(
     Looks for direct matches and fuzzy matches of any part of the search
     term in any part of the db items.
     Returns full, direct matches directly and stops searching further.
-    The fuzzy search only considers parts of the db items in the length
-    of the length of the original search term parts to better match
-    small typos.
+    The fuzzy search only dynamically calculates an allowed distance
+    by word length of <= MIN_MATCH_LEN (2) and <= MID_MATCH_LEN (5)
     Can take multi part search terms and or db items. Both get lowered
     for comparison and stripped off and by whitespaces.
     Does not sanitize by any other means.
@@ -98,52 +99,51 @@ def get_similar(
         list[str]: List of db items that are similar to the search term.
 
     Todo:
-        - export sort by total / avg by param
-        - exclude words of matching when
-            len(word) == FUZZY_DIST_DEFAULT (+ x ?). So that no longer
-            "ab" matches "cd". require first char the same? tbd.
+        - tbd: require first char the same? tbd.
         - tbd: split on special chars like "-"?
         - return first full match or always fuzzy by param
 
     """
-    search_term_split: list[str] = dissect_string(search_term)[search_term]
+    search_term_split: list[str] = dissect_string(search_term)
     matches = {}
-    already_matched_st: list[str] = []
-    already_matched_ip = []
 
     for item in db:
-        item_split = dissect_string(item)[item]
+        already_matched_st: list[str] = []
+        already_matched_ip = []
+        item_split = dissect_string(item)
 
         for st in search_term_split:
             # find direct exact matches:
+            allowed_dist = _get_max_allowed_dist(st, fuzzy_threshold)
+
             if st in item_split:
-                matches.setdefault(item, []).append((
-                    st,
-                    item_split[item_split.index(st)],
-                    0,
-                ))
-                already_matched_st.append(item_split[item_split.index(st)])
+                matched_word = item_split[item_split.index(st)]
+                matches.setdefault(item, []).append((st, matched_word, 0))
+                already_matched_st.append(matched_word)
 
             for i in range(len(item_split)):
                 item_part = item_split[i]
-                # create dist for every st part to every item part
-                if item_part not in already_matched_st:
-                    dist = _calc_distance(
-                        st,
-                        item_part,
-                    )
-                    if dist <= fuzzy_threshold:
+
+                if (
+                    item_part not in already_matched_st
+                    and item_part not in already_matched_ip
+                ):
+                    # create dist for every st part to every item part
+                    # unless we can exit early bc length diffs
+                    if abs(len(st) - len(item_part)) > allowed_dist:
+                        continue
+
+                    dist = _calc_distance(st, item_part)
+                    if dist <= allowed_dist:
                         matches.setdefault(item, []).insert(
                             i,
-                            (
-                                st,
-                                item_part,
-                                dist,
-                            ),
+                            (st, item_part, dist),
                         )
                         already_matched_ip.append(item_part)
 
-        if set(search_term_split) <= set(already_matched_st):
+        if set(search_term_split) <= set(already_matched_st) and len(
+            search_term_split,
+        ) == len(item_split):
             # all search term parts matched directly db item.
             # no need to look further (except flag thats tbd.)
             return [item]
@@ -174,13 +174,13 @@ def get_similar(
     # multiple matches fuzzy                            ✓
     # partial matches where first terms match           ✓
     # partial matches where first terms NOT matches     ✓
-    # sort by dist (total or average of distances):     ✓
 
     # sort by number of matches of split search term to split db item
+    # uses num of None matches as scoring factor.
     matches_by_num_of_matches = dict(
         sorted(
             matches.items(),
-            key=lambda item: sum(1 for n in item[1] if n is not None),
+            key=lambda item: _get_sort_value(item[1], len(search_term_split)),
             reverse=True,
         ),
     )
@@ -193,7 +193,7 @@ def get_similar(
 
     matches_by_not_none_in_front = matches_by_num_of_matches
 
-    # move partially matches where first term not matches to the back
+    # move partially matches to the back if their first term not matches
     if none_in_front_table:
         paired = list(
             zip(
@@ -205,27 +205,28 @@ def get_similar(
         paired.sort(key=lambda x: x[1])  # False < True
         matches_by_not_none_in_front = dict(k for k, v in paired)
 
-    # sort by average distance of (partial) matches
-    sorted_by_distance = dict(
-        sorted(
-            matches_by_not_none_in_front.items(),
-            # key=lambda item: total_distance(item[1]),
-            key=lambda item: avg_distance(item[1]),
-        ),
-    )
-
-    return list(sorted_by_distance.keys())
+    return list(matches_by_not_none_in_front.keys())
 
 
-def avg_distance(matches: list) -> float:
-    """Calculate the average distance of matches."""
-    dists = [m[2] for m in matches if m is not None]
-    return sum(dists) / len(dists) if dists else float("inf")
+def _get_max_allowed_dist(term: str, max_threshold: int) -> int:
+    """Calc max allowed distance based on word length."""
+    length = len(term)
+    if length <= MIN_MATCH_LEN:
+        return 0
+    if length <= MID_MATCH_LEN:
+        return min(1, max_threshold)
+    return max_threshold
 
 
-def total_distance(matches: list) -> int:
-    """Calculate the total distance of matches."""
-    return sum(m[2] for m in matches if m is not None)
+def _get_sort_value(items_list: list, target_items_count: int) -> float:
+    """Rate quality of a match."""
+    if None not in items_list:
+        factor = 1.1 if len(items_list) == target_items_count else 1
+    elif items_list.count(None) == 1:
+        factor = 0.9
+    else:
+        factor = 0.8
+    return factor * sum(1 for n in items_list if n is not None)
 
 
 def _none_in_res_in_front(li: list) -> bool:
@@ -238,33 +239,3 @@ def _none_in_res_in_front(li: list) -> bool:
                 return False
             return True
     return False
-
-
-if __name__ == "__main__":
-    db = [
-        "HMS QUEEN ELIZABETH",
-        "hurtz berlin mitte",
-        "münchen mite",
-        "berlin neukölln",
-        "berlin",
-        "bertin mitte",
-        "USS Theodore Rooseve",
-        "berlin mite",
-        "hamburg altona",
-        "frankfurt",
-        "frankfurt am main",
-        "ussu",
-        "köln",
-        "koeln",
-        "stuttgart west",
-        "the long blanket",
-        "blanket",
-        "xyz",
-    ]
-
-    # search_term = "berlin mitte"
-    search_term = input("search term: ")
-    results = get_similar(db, search_term)
-    print(f"\nsearch_term: {search_term} ")
-    for r in results:
-        print(r)
