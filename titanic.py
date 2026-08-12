@@ -142,10 +142,8 @@ def ships_by_types() -> None:
 def show_countries() -> None:
     """Print all countries present in data."""
     print("\nAll countries present in data [A-Z]:")
-    data: list[dict] = _load_data()["data"]
-    countries = sorted({d["COUNTRY"] for d in data})
-    countries = dict.fromkeys(countries, " ")
-    _print_pretty(countries.items())
+    by_country_sorted = _sort_dict_on_values(_get_count_of_field("COUNTRY"))
+    _print_pretty(by_country_sorted.items())
     print()  # spacer
 
 
