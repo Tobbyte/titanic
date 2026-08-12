@@ -13,7 +13,12 @@ quit
     Quits the program.
 
 
-~ Made with ❤️ and without ai or code completion (except intelliSense) ~
+~ Made with ❤️ and without ai (unless otherwise disclaimed) or
+  code completion (except intelliSense) ~
+
+
+Todo:
+    - use _sanitize_data on all db accesses
 
 """
 
@@ -33,6 +38,7 @@ COMMANDS = {
     "ships_by_types": ("ships_by_types", "sbt"),
     "search_ship": ("search_ship", "ss"),
     "list_data_fields": ("list_data_fields", "ldf"),
+    "show_speed_histogram": ("show_speed_histogram", "sh"),
     "quit": ("quit", "q"),
 }
 
@@ -49,8 +55,15 @@ COMMANDS_DESCRIPTION = {
         "list_data_fields, ldf",
         "List all fields of ship db.",
     ),
+    "show_speed_histogram": (
+        "show_speed_histogram, sh",
+        "Show a histogram of all ships speeds.",
+    ),
     "quit": ("quit, q", "Quit the program"),
 }
+
+MAX_SYMBOLS = 100
+SPEED_SYMBOL_HISTO = "▀"  # U+2580
 
 
 def _load_data() -> dict:
@@ -208,6 +221,58 @@ def _sanitize_data(
     return sanitized_data
 
 
+def _get_speed_data() -> dict:
+    data: list[dict] = _load_data()["data"]
+    return {ship["SHIPNAME"]: ship["SPEED"] for ship in data}
+
+
+### Disclaimer: An AI helped with coming up with this formula.
+def _scale_to_symbols(
+    value: float,
+    min_value: float,
+    max_value: float,
+) -> int:
+    """Scale value to a symbol count between 1 and max_symbols."""
+    if max_value == min_value:
+        return MAX_SYMBOLS
+    fraction = (value - min_value) / (max_value - min_value)
+    return 1 + round(fraction * (MAX_SYMBOLS - 1))
+    ### End AI help.
+
+
+def show_speed_histogram() -> None:
+    """Show a histogram of all ships speeds."""
+    print(
+        "\nAll ships speeds as histogram (descending).\n"
+        "(Ships with 0 speed excluded):\n",
+    )
+    save_speed_data = {
+        k: v
+        for k, v in _sanitize_data(_get_speed_data(), float).items()
+        if v > 0
+    }
+    sorted_by_speed: dict[str, float] = dict(
+        sorted(
+            save_speed_data.items(),
+            key=lambda item: item[1],
+            reverse=True,
+        ),
+    )
+
+    max_speed: float = max(sorted_by_speed.values())
+    min_speed: float = min(sorted_by_speed.values())
+
+    with_annotated_speed = {
+        k: _scale_to_symbols(v, min_speed, max_speed) * SPEED_SYMBOL_HISTO
+        + " | "
+        + str(v)
+        for k, v in sorted_by_speed.items()
+    }
+
+    _print_pretty(with_annotated_speed.items())
+    print()  # spacer
+
+
 def _is_valid_int(raw_input: str) -> bool:
     try:
         int(raw_input)
@@ -329,6 +394,7 @@ def run_titanic() -> None:
         ships_by_types,
         search_ship,
         list_data_fields,
+        show_speed_histogram,
         quit_app,
     ]
     menu_dispatch = dict(zip(COMMANDS.keys(), command_fn, strict=True))
