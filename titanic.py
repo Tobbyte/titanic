@@ -153,7 +153,7 @@ def show_speed_histogram() -> None:
     save_speed_data = {
         k: v
         for k, v in sanitize_data(get_speed_data(), float).items()
-        if v > 0
+        if v is not None and v > 0
     }
     sorted_by_speed: dict[str, float] = dict(
         sorted(
