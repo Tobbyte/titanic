@@ -50,7 +50,7 @@ COMMANDS_DESCRIPTION = {
         f"Show top countries [default: {TOP_COUNTRIES_DEFAULT}]",
     ),
     "ships_by_types": ("ships_by_types, sbt", "List ships by types."),
-    "seach_ship": ("seach_ship, ss", "Search ships by name (fuzzy)."),
+    "search_ship": ("search_ship, ss", "Search ships by name (fuzzy)."),
     "list_data_fields": (
         "list_data_fields, ldf",
         "List all fields of ship db.",
@@ -393,9 +393,9 @@ def quit_app() -> None:
 def run_titanic() -> None:
     """Orchestrate the main program."""
     print(
-        "\nWelcome to the Ships CLI! "
-        "Enter 'help' to view available commands.\n",
+        "\nWelcome to the Ships CLI! Enter 'help' to view available commands.",
     )
+    show_help()
     command_fn = [
         show_help,
         show_countries,
