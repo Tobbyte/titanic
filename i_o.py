@@ -1,3 +1,4 @@
+"""Input_Output related methods."""
 from collections.abc import Iterable
 
 from config import COMMANDS
@@ -29,6 +30,7 @@ def get_user_input_options(prompt: str, options: dict) -> str:
 
 
 def get_user_input(prompt: str) -> str:
+    """Get user input with a prompt."""
     while True:
         raw_input = input(prompt).strip()
         if not raw_input:
@@ -38,7 +40,7 @@ def get_user_input(prompt: str) -> str:
 
 
 def resolve_command(user_command: str) -> str | None:
-    # Resolve a abbreviation like "h" to its command.
+    """Resolve a abbreviation like "h" to its command."""
     for command, variants in COMMANDS.items():
         if user_command in variants:
             return command

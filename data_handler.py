@@ -1,3 +1,4 @@
+"""Datahandler for db related actions."""
 import json
 from pathlib import Path
 
@@ -35,6 +36,7 @@ def get_data_by_field(field: str) -> list:
 
 
 def get_db_fields() -> set:
+    """Get all unique keys of the db data."""
     data: list[dict[str, str]] = _load_data()["data"]
     uique_keys = set()
     for item in data:
@@ -43,5 +45,6 @@ def get_db_fields() -> set:
 
 
 def get_speed_data() -> dict:
+    """Get all ship names and their speed data."""
     data: list[dict] = _load_data()["data"]
     return {ship["SHIPNAME"]: ship["SPEED"] for ship in data}

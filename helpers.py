@@ -1,3 +1,4 @@
+"""Helper functions."""
 from config import MAX_SYMBOLS_HISTO
 
 
@@ -6,6 +7,7 @@ def sort_dict_on_values(
     *,
     descending: bool = True,
 ) -> dict:
+    """Sort a dict on its values."""
     return dict(
         sorted(
             unsorted_dict.items(),
@@ -58,6 +60,7 @@ def scale_to_symbols(
 
 
 def is_valid_int(raw_input: str) -> bool:
+    """Check if a string can be converted to an int."""
     try:
         int(raw_input)
     except ValueError:
