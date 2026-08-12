@@ -295,10 +295,11 @@ def _get_user_input_options(prompt: str, options: dict) -> str:
         raw_input = input(prompt + exit_msg).strip()
         if not raw_input:
             return "-1"
-        if raw_input not in valid_inputs or not _is_valid_int(raw_input):
+        if not _is_valid_int(raw_input) or raw_input not in valid_inputs:
+            valid_inputs_int = [int(v) for v in valid_inputs]
             print(
-                f"\nNot a valid input. Select ({min(valid_inputs)} - "
-                f"{max(valid_inputs)})\n",
+                f"\nNot a valid input. Select ({min(valid_inputs_int)} - "
+                f"{max(valid_inputs_int)})\n",
             )
         else:
             return raw_input
