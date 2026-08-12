@@ -351,8 +351,17 @@ def _get_menu_selection() -> tuple[str, tuple]:
     "help" -> ("help", ())
     "top_countries 5" -> ("top_countries", ("5"))
     """
+    insist_to_quit = False
     while True:
         raw_user_input = input("Enter command: ").lower()
+        if not raw_user_input:
+            print("Press Enter again to exit.")
+            if insist_to_quit:
+                quit_app()
+            insist_to_quit = True
+            continue
+
+        insist_to_quit = False
         user_input_lst = raw_user_input.split()
         user_command = user_input_lst[0]
         param = user_input_lst[1:2]  # slice for i1 to prevent out-of-index
