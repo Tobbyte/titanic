@@ -95,6 +95,18 @@ def _get_data_by_field_value(field: str, query: str) -> list:
     return [ship for ship in data if ship[field] == query]
 
 
+def _show_ship_data(ship_name: str) -> None:
+    """Show data of a ship by ship name."""
+    search_res = _get_data_by_field_value("SHIPNAME", ship_name)
+    if not search_res:
+        print(f'\nNo ship name in db matches your query "{ship_name}"')
+    else:
+        print(f'\nShip data for "{ship_name}":\n')
+        for ship in search_res:
+            _print_pretty(ship.items())
+    print()  # spacer
+
+
 def _get_data_by_field(field: str) -> list:
     """Get all data of a specific field."""
     data: list[dict] = _load_data()["data"]
@@ -128,10 +140,48 @@ def search_ship() -> None:
     search_res = get_similar(ship_names_list, ship_name_query)
     if not search_res:
         print(f'\nNo ship name in db matches your query "{ship_name_query}"')
+    elif len(search_res) == 1:
+        print(f"\nData of {ship_name_query}:")
+        _show_ship_data(search_res[0])
     else:
-        print("\nShip names matching your query:")
-        _print_pretty(dict.fromkeys(search_res, "").items())
+        print("\nMultiple ships match your query, pick one:\n")
+        numbered_results = {}
+        for i in range(1, len(search_res)):
+            numbered_results[str(i)] = search_res[i - 1]
+        prompt = "Select your choice by number: "
+        choice = _get_user_input_options(prompt, numbered_results)
+        _show_ship_data(search_res[int(choice)])
     print()  # spacer
+
+
+def _is_valid_int(raw_input) -> bool:
+    try:
+        int(raw_input)
+    except ValueError:
+        return False
+    return True
+
+
+def _get_user_input_options(prompt: str, options: dict) -> str:
+    """Get user input from a dict of valid options.
+
+    Returns str which is key of options input.
+    """
+    valid_inputs = [k for k, v in options.items()]
+    while True:
+        _print_pretty(options.items())
+        print()  # spacer
+        raw_input = input(prompt).strip()
+        if (
+            not raw_input
+            or raw_input not in valid_inputs
+            or not _is_valid_int(raw_input)
+        ):
+            print(
+                f"Not a valid input. Select ({min(valid_inputs)} - {max(valid_inputs)}",
+            )
+        else:
+            return raw_input
 
 
 def _get_user_input(prompt: str) -> str:
