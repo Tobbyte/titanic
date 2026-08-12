@@ -180,6 +180,34 @@ def list_data_fields() -> None:
     print()  # spacer
 
 
+def _sanitize_data(
+    raw_data: dict,
+    expected_type: type[float] | type[int] | type[str],
+) -> dict:
+    """Sanitize all fields of to match provided type.
+
+    Replaces non-convertible data with None.
+    """
+    sanitized_data: dict = {}
+    for key, value in raw_data.items():
+        if expected_type is int:
+            try:
+                sanitized_data[key] = int(value)
+            except ValueError:
+                sanitized_data[key] = None
+        elif expected_type is float:
+            try:
+                sanitized_data[key] = float(value)
+            except ValueError:
+                sanitized_data[key] = None
+        elif expected_type is str:
+            sanitized_data[key] = str(value)
+        else:
+            e_msg = "Expected type must be float or str."
+            raise ValueError(e_msg)
+    return sanitized_data
+
+
 def _is_valid_int(raw_input: str) -> bool:
     try:
         int(raw_input)
