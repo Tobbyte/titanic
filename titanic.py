@@ -130,6 +130,7 @@ def show_countries() -> None:
         print("    " + country)
     print()  # spacer
 
+
 def search_ship() -> None:
     """Search by name for ships.
 
@@ -150,6 +151,9 @@ def search_ship() -> None:
             numbered_results[str(i)] = search_res[i - 1]
         prompt = "Select your choice by number: "
         choice = _get_user_input_options(prompt, numbered_results)
+        if choice == "-1":
+            print()  # spacer
+            return
         _show_ship_data(search_res[int(choice)])
     print()  # spacer
 
@@ -168,17 +172,18 @@ def _get_user_input_options(prompt: str, options: dict) -> str:
     Returns str which is key of options input.
     """
     valid_inputs = [k for k, v in options.items()]
+    exit_msg = "\n(Enter to exit) "
+    print()  # spacer
+    _print_pretty(options.items())
+    print()  # spacer
     while True:
-        _print_pretty(options.items())
-        print()  # spacer
-        raw_input = input(prompt).strip()
-        if (
-            not raw_input
-            or raw_input not in valid_inputs
-            or not _is_valid_int(raw_input)
-        ):
+        raw_input = input(prompt + exit_msg).strip()
+        if not raw_input:
+            return "-1"
+        if raw_input not in valid_inputs or not _is_valid_int(raw_input):
             print(
-                f"Not a valid input. Select ({min(valid_inputs)} - {max(valid_inputs)}",
+                f"\nNot a valid input. Select ({min(valid_inputs)} - "
+                f"{max(valid_inputs)})\n",
             )
         else:
             return raw_input
