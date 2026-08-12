@@ -43,7 +43,7 @@ COMMANDS_DESCRIPTION = {
         f"Show top countries [default: {TOP_COUNTRIES_DEFAULT}]",
     ),
     "ships_by_types": ("ships_by_types, sbt", "List ships by types."),
-    "seach_ship": ("seach_ship", "Search ships by name (fuzzy)."),
+    "seach_ship": ("seach_ship, ss", "Search ships by name (fuzzy)."),
     "quit": ("quit, q", "Quit the program"),
 }
 
