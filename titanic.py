@@ -112,7 +112,7 @@ def search_ship() -> None:
     else:
         print("\nMultiple ships match your query, pick one:\n")
         numbered_results = {}
-        for i in range(1, len(search_res)):
+        for i in range(1, len(search_res) + 1):
             numbered_results[str(i)] = search_res[i - 1]
         prompt = "Select your choice by number: "
         choice = get_user_input_options(prompt, numbered_results)
