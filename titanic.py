@@ -80,8 +80,8 @@ def top_countries(num: int | None = None) -> None:
     ships_by_country_sorted = sort_dict_on_values(
         get_count_of_field("COUNTRY"),
     )
-    ships_by_country_sorted_top = dict(  # extract?
-        list(ships_by_country_sorted.items())[: num + 1],
+    ships_by_country_sorted_top = dict(
+        list(ships_by_country_sorted.items())[:num],
     )
 
     print_pretty(ships_by_country_sorted_top.items())
