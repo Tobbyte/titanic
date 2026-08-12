@@ -26,7 +26,6 @@ import sys
 
 from config import (
     COMMANDS,
-    COMMANDS_DESCRIPTION,
     SPEED_SYMBOL_HISTO,
     TOP_COUNTRIES_DEFAULT,
 )
@@ -55,8 +54,14 @@ def show_help() -> None:
     """Display the available commands."""
     print("\nAvailable commands:")
 
-    command_desc_vals = COMMANDS_DESCRIPTION.values()
-    print_pretty(command_desc_vals)
+    help_items = {
+        f"{command_item['command']}, {command_item['abbr']}": command_item[
+            "desc"
+        ]
+        for command_item in COMMANDS.values()
+    }
+
+    print_pretty(help_items.items())
     print()  # spacer
 
 
@@ -188,17 +193,17 @@ def run_titanic() -> None:
         "\nWelcome to the Ships CLI! Enter 'help' to view available commands.",
     )
     show_help()
-    command_fn = [
-        show_help,
-        show_countries,
-        top_countries,
-        ships_by_types,
-        search_ship,
-        list_data_fields,
-        show_speed_histogram,
-        quit_app,
-    ]
-    menu_dispatch = dict(zip(COMMANDS.keys(), command_fn, strict=True))
+    menu_dispatch = {
+        COMMANDS["help"]["command"]: show_help,
+        COMMANDS["show_countries"]["command"]: show_countries,
+        COMMANDS["top_countries"]["command"]: top_countries,
+        COMMANDS["ships_by_types"]["command"]: ships_by_types,
+        COMMANDS["search_ship"]["command"]: search_ship,
+        COMMANDS["list_data_fields"]["command"]: list_data_fields,
+        COMMANDS["show_speed_histogram"]["command"]: show_speed_histogram,
+        COMMANDS["quit"]["command"]: quit_app,
+    }
+
     while True:
         choice, params = get_menu_selection()
         menu_dispatch[choice](*params)

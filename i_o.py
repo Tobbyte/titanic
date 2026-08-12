@@ -41,9 +41,12 @@ def get_user_input(prompt: str) -> str:
 
 def resolve_command(user_command: str) -> str | None:
     """Resolve a abbreviation like "h" to its command."""
-    for command, variants in COMMANDS.items():
-        if user_command in variants:
-            return command
+    for commands in COMMANDS.values():
+        if (
+            user_command == commands["command"]
+            or user_command in commands["abbr"]
+        ):
+            return commands["command"]
     return None
 
 
