@@ -32,6 +32,7 @@ COMMANDS = {
     "top_countries": ("top_countries", "tc"),
     "ships_by_types": ("ships_by_types", "sbt"),
     "search_ship": ("search_ship", "ss"),
+    "list_data_fields": ("list_data_fields", "ldf"),
     "quit": ("quit", "q"),
 }
 
@@ -44,6 +45,10 @@ COMMANDS_DESCRIPTION = {
     ),
     "ships_by_types": ("ships_by_types, sbt", "List ships by types."),
     "seach_ship": ("seach_ship, ss", "Search ships by name (fuzzy)."),
+    "list_data_fields": (
+        "list_data_fields, ldf",
+        "List all fields of ship db.",
+    ),
     "quit": ("quit, q", "Quit the program"),
 }
 
@@ -155,6 +160,23 @@ def search_ship() -> None:
             print()  # spacer
             return
         _show_ship_data(search_res[int(choice)])
+    print()  # spacer
+
+
+def _get_db_fields() -> set:
+    data: list[dict[str, str]] = _load_data()["data"]
+    uique_keys = set()
+    for item in data:
+        uique_keys.update(item.keys())
+    return uique_keys
+
+
+def list_data_fields() -> None:
+    """List all fields of the ship database."""
+    print("\nAll fields present in data:")
+    fields = list(_get_db_fields())
+    fields.sort()
+    _print_pretty(dict.fromkeys(fields, " ").items())
     print()  # spacer
 
 
@@ -278,6 +300,7 @@ def run_titanic() -> None:
         top_countries,
         ships_by_types,
         search_ship,
+        list_data_fields,
         quit_app,
     ]
     menu_dispatch = dict(zip(COMMANDS.keys(), command_fn, strict=True))
