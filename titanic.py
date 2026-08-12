@@ -158,7 +158,7 @@ def search_ship() -> None:
     print()  # spacer
 
 
-def _is_valid_int(raw_input) -> bool:
+def _is_valid_int(raw_input: str) -> bool:
     try:
         int(raw_input)
     except ValueError:
