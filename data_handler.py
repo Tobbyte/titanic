@@ -4,10 +4,12 @@ from pathlib import Path
 
 from config import DATA_PATH
 
+BASE_DIR = Path(__file__).resolve().parent
+DATA_PATH_ABS = BASE_DIR / DATA_PATH
 
 def _load_data() -> dict:
     # read the data json
-    with Path.open(Path(DATA_PATH)) as file:
+    with Path(DATA_PATH_ABS).open() as file:
         return json.loads(file.read())
 
 
