@@ -4,10 +4,12 @@ from pathlib import Path
 
 from config import DATA_PATH
 
+BASE_DIR = Path(__file__).resolve().parent
+DATA_PATH_ABS = BASE_DIR / DATA_PATH
 
 def _load_data() -> dict:
     # read the data json
-    with Path.open(Path(DATA_PATH)) as file:
+    with Path(DATA_PATH_ABS).open() as file:
         return json.loads(file.read())
 
 
@@ -44,7 +46,25 @@ def get_db_fields() -> set:
     return uique_keys
 
 
+def get_data_fields_save() -> set:
+    """Get all keys of the data that are in all datapoints."""
+    data: list[dict[str, str]] = _load_data()["data"]
+    all_keys = get_db_fields()
+    save_keys = set(all_keys)
+
+    for item in data:
+        current_keys = item.keys()
+        differing_keys = save_keys.difference(current_keys)
+        if differing_keys:
+            save_keys.difference_update(differing_keys)
+
+    return save_keys
+
+
 def get_speed_data() -> dict:
     """Get all ship names and their speed data."""
     data: list[dict] = _load_data()["data"]
     return {ship["SHIPNAME"]: ship["SPEED"] for ship in data}
+
+def get_all_data() -> dict:
+    return _load_data()

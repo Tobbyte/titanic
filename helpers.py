@@ -20,28 +20,35 @@ def sort_dict_on_values(
 def sanitize_data(
     raw_data: dict,
     expected_type: type[float] | type[int] | type[str],
+    only_fields: list | None = None,
 ) -> dict:
     """Sanitize all fields of to match provided type.
 
     Replaces non-convertible data with None.
     """
     sanitized_data: dict = {}
-    for key, value in raw_data.items():
+
+    def _ensure(key, value) -> None:
         if expected_type is int:
-            try:
-                sanitized_data[key] = int(value)
-            except ValueError:
-                sanitized_data[key] = None
+            if value:
+                try:
+                    sanitized_data[key] = int(value)
+                except ValueError:
+                    sanitized_data[key] = None
         elif expected_type is float:
-            try:
-                sanitized_data[key] = float(value)
-            except ValueError:
-                sanitized_data[key] = None
+            if value:
+                try:
+                    sanitized_data[key] = float(value)
+                except ValueError:
+                    sanitized_data[key] = None
         elif expected_type is str:
             sanitized_data[key] = str(value)
+
+    for key, value in raw_data.items():
+        if only_fields and key in only_fields:
+            _ensure(key, value)
         else:
-            e_msg = "Expected type must be float or str."
-            raise ValueError(e_msg)
+            _ensure(key, value)
     return sanitized_data
 
 
