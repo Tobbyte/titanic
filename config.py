@@ -32,47 +32,47 @@ COMMANDS = {
     # desc is what's in the help
     "help": {
         "command": "help",
-        "abbr": ("h"),
+        "abbr": ("h",),
         "desc": "Show this help",
     },
     "show_countries": {
         "command": "show_countries",
-        "abbr": ("sc"),
+        "abbr": ("sc",),
         "desc": "List all countries",
     },
     "top_countries": {
         "command": "top_countries",
-        "abbr": ("tc"),
+        "abbr": ("tc",),
         "desc": f"Show top countries (default:){TOP_COUNTRIES_DEFAULT}]",
     },
     "ships_by_types": {
         "command": "ships_by_types",
-        "abbr": ("sbt"),
+        "abbr": ("sbt",),
         "desc": "List ships by types.",
     },
     "search_ship": {
         "command": "search_ship",
-        "abbr": ("ss"),
+        "abbr": ("ss",),
         "desc": "Search ships by name (fuzzy).",
     },
     "list_data_fields": {
         "command": "list_data_fields",
-        "abbr": ("ldf"),
+        "abbr": ("ldf",),
         "desc": "List all fields of ship db.",
     },
     "show_speed_histogram": {
         "command": "show_speed_histogram",
-        "abbr": ("sh"),
+        "abbr": ("sh",),
         "desc": "Show a histogram of all ships speeds.",
     },
     "draw_map": {
         "command": "draw_map",
-        "abbr": ("dm"),
+        "abbr": ("dm",),
         "desc": "Create a ships_map.html with ships positions.",
     },
     "quit": {
         "command": "quit",
-        "abbr": ("q"),
+        "abbr": ("q",),
         "desc": "Quit the program",
     },
 }

@@ -62,7 +62,7 @@ def resolve_command(user_command: str) -> str | None:
             user_command == commands["command"]
             or user_command in commands["abbr"]
         ):
-            return commands["command"]
+            return commands["command"]  # pyright: ignore[reportReturnType]
     return None
 
 

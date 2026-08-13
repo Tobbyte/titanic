@@ -61,7 +61,7 @@ def show_help() -> None:
     print("\nAvailable commands:")
 
     help_items = {
-        f"{command_item['command']}, {command_item['abbr']}": command_item[
+        f"{command_item['command']}, {', '.join(command_item['abbr'])}": command_item[  # noqa: E501
             "desc"
         ]
         for command_item in COMMANDS.values()
