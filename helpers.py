@@ -30,13 +30,13 @@ def sanitize_data(  # noqa: C901
 
     def _ensure(key, value) -> None:  # noqa: ANN001
         if expected_type is int:
-            if value:
+            if value is not None:
                 try:
                     sanitized_data[key] = int(value)
                 except ValueError:
                     sanitized_data[key] = None
         elif expected_type is float:
-            if value:
+            if value is not None:
                 try:
                     sanitized_data[key] = float(value)
                 except ValueError:

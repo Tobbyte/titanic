@@ -59,7 +59,7 @@ def get_latlng(data: list) -> dict[str, list]:
     res = {"lats": [], "lngs": []}
 
     for d in san_data:
-        if d["LAT"] and d["LON"]:
+        if d["LAT"] is not None and d["LON"] is not None:
             res["lats"].append(d["LAT"])
             res["lngs"].append(d["LON"])
     return res
