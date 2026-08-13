@@ -84,7 +84,7 @@ def _assign_color(types: list) -> dict:
     # assumes len(types) <= FOLIUM_COLOR_OPTIONS. Enough for now.
     return dict(zip(types, FOLIUM_COLOR_OPTIONS, strict=False))
 
-def init_map() -> None:
+def draw_map() -> None:
     """Create and save a folium map."""
     raw_data = get_all_data()
 
@@ -127,4 +127,4 @@ def init_map() -> None:
     m.save("ships_map.html")
 
 if __name__ == "__main__":
-    init_map()
+    draw_map()
