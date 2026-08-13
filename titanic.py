@@ -22,6 +22,9 @@ Todo:
 
 """
 
+- use data_fields_save
+- rename get_db_fields
+
 import sys
 
 from config import (

@@ -46,6 +46,21 @@ def get_db_fields() -> set:
     return uique_keys
 
 
+def get_data_fields_save() -> set:
+    """Get all keys of the data that are in all datapoints."""
+    data: list[dict[str, str]] = _load_data()["data"]
+    all_keys = get_db_fields()
+    save_keys = set(all_keys)
+
+    for item in data:
+        current_keys = item.keys()
+        differing_keys = save_keys.difference(current_keys)
+        if differing_keys:
+            save_keys.difference_update(differing_keys)
+
+    return save_keys
+
+
 def get_speed_data() -> dict:
     """Get all ship names and their speed data."""
     data: list[dict] = _load_data()["data"]

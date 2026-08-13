@@ -3,6 +3,27 @@ TOP_COUNTRIES_DEFAULT = 5
 SPEED_SYMBOL_HISTO = "▀"  # U+2580
 MAX_SYMBOLS_HISTO = 100
 DATA_PATH = "ships_data.json"
+COLOR_LEGEND_FILLER = "    "  # use nbs as invisible, colorable span content
+FOLIUM_COLOR_OPTIONS = {  # from folium wo non css default named-colors
+    "red",
+    "darkred",
+    "orange",
+    "beige",
+    "green",
+    "darkgreen",
+    "lightgreen",
+    "blue",
+    "darkblue",
+    "lightblue",
+    "purple",
+    "pink",
+    "gray",
+    "lightgray",
+    "black",
+}  # "lightred",
+# "cadetblue",
+# "darkpurple",
+# "white",
 
 COMMANDS = {
     # command is what the user calls
