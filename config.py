@@ -3,6 +3,7 @@ TOP_COUNTRIES_DEFAULT = 5
 SPEED_SYMBOL_HISTO = "▀"  # U+2580
 MAX_SYMBOLS_HISTO = 100
 DATA_PATH = "ships_data.json"
+SHIPS_MAP_PATH = "ships_map.html"
 COLOR_LEGEND_FILLER = "    "  # use nbs as invisible, colorable span content
 FOLIUM_COLOR_OPTIONS = {  # from folium wo non css default named-colors
     "red",
@@ -63,6 +64,11 @@ COMMANDS = {
         "command": "show_speed_histogram",
         "abbr": ("sh"),
         "desc": "Show a histogram of all ships speeds.",
+    },
+    "draw_map": {
+        "command": "draw_map",
+        "abbr": ("dm"),
+        "desc": "Create a ships_map.html with ships positions.",
     },
     "quit": {
         "command": "quit",

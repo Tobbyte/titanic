@@ -1,7 +1,7 @@
 """Mapping module using Folium."""
 
 import folium
-from config import COLOR_LEGEND_FILLER, FOLIUM_COLOR_OPTIONS
+from config import COLOR_LEGEND_FILLER, FOLIUM_COLOR_OPTIONS, SHIPS_MAP_PATH
 from data_handler import get_all_data, get_data_by_field, get_data_fields_save
 from helpers import sanitize_data
 
@@ -124,7 +124,7 @@ def draw_map() -> None:
 
     folium.LayerControl(collapsed=False).add_to(m)  # should be added at last
 
-    m.save("ships_map.html")
+    m.save(SHIPS_MAP_PATH)
 
 if __name__ == "__main__":
     draw_map()

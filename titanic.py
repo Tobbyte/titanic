@@ -24,9 +24,12 @@ Todo:
 
 
 import sys
+import webbrowser
+from pathlib import Path
 
 from config import (
     COMMANDS,
+    SHIPS_MAP_PATH,
     SPEED_SYMBOL_HISTO,
     TOP_COUNTRIES_DEFAULT,
 )
@@ -44,11 +47,13 @@ from helpers import (
     sort_dict_on_values,
 )
 from i_o import (
+    get_ab_choice,
     get_menu_selection,
     get_user_input,
     get_user_input_options,
     print_pretty,
 )
+from mapping import draw_map as mapping_draw_map
 
 
 def show_help() -> None:
@@ -183,6 +188,22 @@ def show_speed_histogram() -> None:
     print()  # spacer
 
 
+def draw_map() -> None:
+    """Create and opens a ships_map.html with ships position."""
+    print("\nCreating ships_map.html in cwd.")
+    mapping_draw_map()
+    print()  # spacer
+    open_map = get_ab_choice(
+        'Do you want to open the map? Enter "(y)es" or "(n)o": ',
+        "y",
+        "n",
+    )
+    if open_map:
+        webbrowser.open("file://" + str(Path(SHIPS_MAP_PATH).resolve()))
+        print("\nShips map opened in new browser tap.")
+    print()  # spacer
+
+
 def quit_app() -> None:
     """Quit the program."""
     sys.exit()
@@ -202,6 +223,7 @@ def run_titanic() -> None:
         COMMANDS["search_ship"]["command"]: search_ship,
         COMMANDS["list_data_fields"]["command"]: list_data_fields,
         COMMANDS["show_speed_histogram"]["command"]: show_speed_histogram,
+        COMMANDS["draw_map"]["command"]: draw_map,
         COMMANDS["quit"]["command"]: quit_app,
     }
 

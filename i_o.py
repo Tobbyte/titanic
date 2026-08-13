@@ -39,6 +39,22 @@ def get_user_input(prompt: str) -> str:
             return raw_input
 
 
+def get_ab_choice(prompt: str, opt_a: str, opt_b: str) -> bool:
+    """Ask user to choose between opt_a and opt_b.
+
+    Returns True for opt_a,
+    returns False for opt_b.
+    """
+    while True:
+        choice = get_user_input(prompt)
+        if choice not in (opt_a, opt_b):
+            print(f'Choose "{opt_a}" or "{opt_b}": ')
+        else:
+            break
+
+    return choice == opt_a
+
+
 def resolve_command(user_command: str) -> str | None:
     """Resolve a abbreviation like "h" to its command."""
     for commands in COMMANDS.values():
