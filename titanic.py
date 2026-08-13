@@ -187,7 +187,7 @@ def draw_map() -> None:
     )
     if open_map:
         webbrowser.open("file://" + str(Path(SHIPS_MAP_PATH).resolve()))
-        print("\nShips map opened in new browser tap.")
+        print("\nShips map opened in new browser tab.")
     print()  # spacer
 
 
