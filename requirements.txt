@@ -1,1 +1,2 @@
 folium
+git+https://github.com/Tobbyte/fuzzy_tobbyte.git@main#egg=fuzzy_tobbyte
