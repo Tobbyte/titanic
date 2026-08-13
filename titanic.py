@@ -1,18 +1,5 @@
 """A simple CLI to interact with data from MarineTraffic.
 
-help
-    Prints a list of the available commands.
-show_countries
-    Prints a list of all countries of the ships, without duplicates,
-    ordered alphabetically.
-top_countries <num_countries>
-    Prints a list of the top <num> countries with the most ships.
-    For example, top_countries 5, prints a list of the 5 countries which
-    have the most ships, along with the number of ships.
-quit
-    Quits the program.
-
-
 ~ Made with ❤️ and without ai (unless otherwise disclaimed) or
   code completion (except intelliSense) ~
 
