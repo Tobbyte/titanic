@@ -4,7 +4,7 @@ SPEED_SYMBOL_HISTO = "▀"  # U+2580
 MAX_SYMBOLS_HISTO = 100
 DATA_PATH = "ships_data.json"
 SHIPS_MAP_PATH = "ships_map.html"
-COLOR_LEGEND_FILLER = "    "  # use nbs as invisible, colorable span content
+COLOR_LEGEND_FILLER = "    "  # use nbs as invisible, colorable span content  # noqa: E501, RUF001
 FOLIUM_COLOR_OPTIONS = {  # from folium wo non css default named-colors
     "red",
     "darkred",

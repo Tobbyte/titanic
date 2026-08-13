@@ -67,4 +67,5 @@ def get_speed_data() -> dict:
     return {ship["SHIPNAME"]: ship["SPEED"] for ship in data}
 
 def get_all_data() -> dict:
+    """Get all data from the db."""
     return _load_data()

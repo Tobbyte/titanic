@@ -17,7 +17,7 @@ def sort_dict_on_values(
     )
 
 
-def sanitize_data(
+def sanitize_data(  # noqa: C901
     raw_data: dict,
     expected_type: type[float] | type[int] | type[str],
     only_fields: list | None = None,
@@ -28,7 +28,7 @@ def sanitize_data(
     """
     sanitized_data: dict = {}
 
-    def _ensure(key, value) -> None:
+    def _ensure(key, value) -> None:  # noqa: ANN001
         if expected_type is int:
             if value:
                 try:
