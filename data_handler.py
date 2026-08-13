@@ -37,7 +37,7 @@ def get_data_by_field(field: str) -> list:
     return [ship[field] for ship in data]
 
 
-def get_db_fields() -> set:
+def get_data_fields() -> set:
     """Get all unique keys of the db data."""
     data: list[dict[str, str]] = _load_data()["data"]
     uique_keys = set()
@@ -49,7 +49,7 @@ def get_db_fields() -> set:
 def get_data_fields_save() -> set:
     """Get all keys of the data that are in all datapoints."""
     data: list[dict[str, str]] = _load_data()["data"]
-    all_keys = get_db_fields()
+    all_keys = get_data_fields()
     save_keys = set(all_keys)
 
     for item in data:

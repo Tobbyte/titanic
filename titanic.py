@@ -22,8 +22,6 @@ Todo:
 
 """
 
-- use data_fields_save
-- rename get_db_fields
 
 import sys
 
@@ -36,7 +34,7 @@ from data_handler import (
     get_count_of_field,
     get_data_by_field,
     get_data_by_field_value,
-    get_db_fields,
+    get_data_fields,
     get_speed_data,
 )
 from fuzzy_tobbyte import get_similar
@@ -146,7 +144,7 @@ def _print_ship_data(ship_name: str) -> None:
 def list_data_fields() -> None:
     """List all fields of the ship database."""
     print("\nAll fields present in data:")
-    fields = list(get_db_fields())
+    fields = list(get_data_fields())
     fields.sort()
     print_pretty(dict.fromkeys(fields, " ").items())
     print()  # spacer
