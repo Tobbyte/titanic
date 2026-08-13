@@ -4,7 +4,7 @@ A simple cli to explore and analyze ship data from MarineTraffic (local file for
 
 ## Features
 
-- Search ships by name (fuzzy matching, using fuzzy_tobbyte.py)
+- Search ships by name (fuzzy matching, using custom module [fuzzy_tobbyte](https://github.com/Tobbyte/fuzzy_tobbyte))
 - View top countries by ship count
 - Display ship types and speeds
 - Interactive map visualization
@@ -37,7 +37,7 @@ Available commands:
 
 ## Requirements
 
-See `requirements.txt` for dependencies (folium).
+See `requirements.txt` for dependencies (folium, fuzzy_tobbyte).
 
 
 ## Disclaimer

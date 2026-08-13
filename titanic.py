@@ -8,6 +8,12 @@ I'm aware the assignment says to save the speed histogram to a file.
 Since we already did this in a previous project, I went for
 something more fun.
 
+@Dear Tomer:
+I mostly completely rewrote my fuzzy search and it's now installed
+via github directly. Since you know my first iterations, I would greatly
+appreciate your comments on that too. :)
+(I added it as copy_fuzzy_tobbyte.py)
+
 Todo:
     - use sanitize_data on all db accesses
 
