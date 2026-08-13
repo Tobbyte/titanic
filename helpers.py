@@ -45,9 +45,7 @@ def sanitize_data(  # noqa: C901
             sanitized_data[key] = str(value)
 
     for key, value in raw_data.items():
-        if only_fields and key in only_fields:
-            _ensure(key, value)
-        else:
+        if not only_fields or key in only_fields:
             _ensure(key, value)
     return sanitized_data
 
