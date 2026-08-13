@@ -13,6 +13,11 @@ A simple cli to explore and analyze ship data from MarineTraffic (local file for
 ## Installation
 
 1. Clone the repository
+```bash
+git clone git@github.com:Tobbyte/titanic.git
+cd titanic
+```
+
 2. Install dependencies:
 ```bash
 pip install -r requirements.txt
