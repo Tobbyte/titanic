@@ -50,3 +50,6 @@ def get_speed_data() -> dict:
     """Get all ship names and their speed data."""
     data: list[dict] = _load_data()["data"]
     return {ship["SHIPNAME"]: ship["SPEED"] for ship in data}
+
+def get_all_data() -> dict:
+    return _load_data()
